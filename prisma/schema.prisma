@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @default(uuid())
+  photo    String?
+  userName String  @unique
+  name     String
+  phone    String  @unique
+  password String
+  email    String  @unique
+
+  sendChats     Chat[] @relation("FromUser")
+  receivedChats Chat[] @relation("ToUser")
+
+  FromMessage Message[] @relation("FromUser")
+  ToMessage   Message[] @relation("ToUser")
+
+  group         Group[]        @relation("GroupUsers")
+  groupMessages GroupMessage[]
+
+  GlobalMessage GlobalMessage[]
+
+  createdAt DateTime @default(now())
+}
+
+model Chat {
+  id String @id @default(uuid())
+
+  from   User   @relation("FromUser", fields: [fromId], references: [id])
+  fromId String
+
+  to   User   @relation("ToUser", fields: [toId], references: [id])
+  toId String
+
+  Message Message[]
+
+  createdAt DateTime @default(now())
+}
+
+model Message {
+  id String @id @default(uuid())
+
+  chat   Chat   @relation(fields: [chatId], references: [id])
+  chatId String
+
+  from   User   @relation("FromUser", fields: [fromId], references: [id])
+  fromId String
+
+  to   User   @relation("ToUser", fields: [toId], references: [id])
+  toId String
+
+  text String
+
+  createdAt DateTime @default(now())
+}
+
+model Group {
+  id        String @id @default(uuid())
+  name      String
+  groupName String @unique
+
+  users        User[]         @relation("GroupUsers")
+  GroupMessage GroupMessage[]
+
+  createdAt DateTime @default(now())
+}
+
+model GroupMessage {
+  id String @id @default(uuid())
+
+  from   User   @relation(fields: [fromId], references: [id])
+  fromId String
+
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId String
+
+  text String
+
+  createdAt DateTime @default(now())
+}
+
+model GlobalMessage {
+  id String @id @default(uuid())
+
+  message String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
