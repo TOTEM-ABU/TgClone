@@ -5,9 +5,7 @@ export class MessageToGroupDto {
   @ApiProperty()
   @IsString()
   text: string;
-
-  @ApiProperty()
-  @IsString()
+  
   fromId: string;
 
   @ApiProperty()

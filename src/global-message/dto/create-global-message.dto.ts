@@ -6,7 +6,5 @@ export class CreateGlobalMessageDto {
   @IsString()
   message: string;
 
-  @ApiProperty()
-  @IsString()
   userId: string;
 }

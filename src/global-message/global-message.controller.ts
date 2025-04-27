@@ -1,14 +1,25 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { GlobalMessageService } from './global-message.service';
 import { CreateGlobalMessageDto } from './dto/create-global-message.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Request } from 'express';
 
 @Controller('global-message')
 export class GlobalMessageController {
   constructor(private readonly globalMessageService: GlobalMessageService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createGlobalMessageDto: CreateGlobalMessageDto) {
-    return this.globalMessageService.create(createGlobalMessageDto);
+  create(@Body() data: CreateGlobalMessageDto, @Req() req: Request) {
+    return this.globalMessageService.create(data, req['user']);
   }
 
   @Get()
@@ -16,8 +27,9 @@ export class GlobalMessageController {
     return this.globalMessageService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Get()
-  findById(@Query('myId') myId: string) {
-    return this.globalMessageService.findMy(myId);
+  findById(myId: string, @Req() req: Request) {
+    return this.globalMessageService.findMy(myId, req['user']);
   }
 }

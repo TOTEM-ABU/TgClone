@@ -7,8 +7,13 @@ import { CreateMessageDto } from './dto/create-message.dto';
 export class ChatService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createChat(data: CreateChatDto) {
-    let chat = await this.prisma.chat.create({ data });
+  async createChat(data: CreateChatDto, fromId: string) {
+    let chat = await this.prisma.chat.create({
+      data: {
+        ...data,
+        fromId: fromId,
+      },
+    });
     return chat;
   }
 
@@ -17,10 +22,10 @@ export class ChatService {
     return chat;
   }
 
-  async getChat(myId: string) {
+  async getChat(myId: string, user?: any) {
     let chat = await this.prisma.chat.findMany({
       where: {
-        OR: [{ fromId: myId }, { toId: myId }],
+        OR: [{ fromId: myId }],
       },
       include: {
         from: true,
@@ -30,8 +35,13 @@ export class ChatService {
     return chat;
   }
 
-  async createMessage(data: CreateMessageDto) {
-    let message = this.prisma.message.create({ data });
+  async createMessage(data: CreateMessageDto, fromId: string) {
+    let message = this.prisma.message.create({
+      data: {
+        ...data,
+        fromId: fromId,
+      },
+    });
     return message;
   }
 

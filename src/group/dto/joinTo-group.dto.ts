@@ -5,8 +5,6 @@ export class JoinToGroupDto {
   @ApiProperty()
   @IsString()
   groupId: string;
-
-  @ApiProperty()
-  @IsString()
+  
   userId: string;
 }

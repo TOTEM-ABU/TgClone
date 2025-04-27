@@ -14,9 +14,9 @@ export class GroupService {
     return gr;
   }
 
-  async joinGr(data: JoinToGroupDto) {
+  async joinGr(data: JoinToGroupDto, userId: string) {
     let joined = await this.prisma.user.update({
-      where: { id: data.userId },
+      where: { id: userId },
       data: {
         group: { set: [{ id: data.groupId }] },
       },
@@ -24,7 +24,7 @@ export class GroupService {
     return joined;
   }
 
-  async getGr(myId: string) {
+  async getGr(myId: string, user?: any) {
     let gr = await this.prisma.group.findMany({
       where: {
         users: {
@@ -35,8 +35,13 @@ export class GroupService {
     return gr;
   }
 
-  async messageCreate(data: MessageToGroupDto) {
-    let message = await this.prisma.groupMessage.create({ data });
+  async messageCreate(data: MessageToGroupDto, fromId: string) {
+    let message = await this.prisma.groupMessage.create({
+      data: {
+        ...data,
+        fromId: fromId,
+      },
+    });
     return message;
   }
 

@@ -7,9 +7,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class GlobalMessageService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreateGlobalMessageDto) {
+  async create(data: CreateGlobalMessageDto, userId: string) {
     try {
-      let global = await this.prisma.globalMessage.create({ data });
+      let global = await this.prisma.globalMessage.create({
+        data: {
+          ...data,
+          userId: userId,
+        },
+      });
       return global;
     } catch (error) {
       return error;
@@ -27,7 +32,7 @@ export class GlobalMessageService {
     }
   }
 
-  async findMy(myId: string) {
+  async findMy(myId: string, user?: any) {
     try {
       let global = await this.prisma.globalMessage.findMany({
         where: {
